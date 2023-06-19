@@ -1,35 +1,71 @@
-#include <iostream>
-#include <string>
+//para compilar no linux:
+//g++ main.cpp -o main -lavformat -lavcodec -lavutil -lswresample
 
-#include <libavformat/avformat.h>
+#include "imports.h"
+#include "video.cpp"
 
-//using namespace ffmpegcpp;
+using namespace std;
 
+string nomeArquivo;
+int sel;
+bool executar = true;
+string play = "ffplay x";
 
 int main() {
-    std::string nomeArquivo = "video.mp4";
-    
-    avformat_network_init();
-    
-    AVFormatContext* formatoContexto = avformat_alloc_context();
-    if (avformat_open_input(&formatoContexto, nomeArquivo.c_str(), nullptr, nullptr) != 0) {
-        std::cout << "Erro ao abrir o arquivo: " << nomeArquivo << std::endl;
-        return -1;
+    Video arquivoVideo;
+
+    while (executar)
+    {
+        cout<<"==========================="<<endl;
+        cout<<"Op 1: Inserir nome"<<endl;
+        cout<<"Op 2: Checar codec do video"<<endl;
+        cout<<"Op 3: Executar video"<<endl;
+        cout<<"Op 4: Sair"<<endl;;
+        cout<<"==========================="<<endl;
+        cout<<"Sel:";
+        cin >> sel;
+
+        switch (sel)
+        {
+        case 1:
+            cout<<"Insira o nome do arquivo: ";
+            cin >> nomeArquivo;
+            arquivoVideo.setName(nomeArquivo);
+            break;
+
+        case 2:
+            if(arquivoVideo.arquivoExiste()){
+                cout<<"==========================="<<endl;
+                arquivoVideo.getCodec();
+                sleep(1);
+            }else{
+                cout<<"==========================="<<endl;
+                cout<<"Nome do arquivo invalido."<<endl;
+                sleep(1);
+            }
+            break;
+
+        case 3:
+            if(arquivoVideo.arquivoExiste()){
+                string texto =  play.replace(play.find("x"), 1, nomeArquivo);
+                system(texto.c_str());
+            }else{
+                cout<<"==========================="<<endl;
+                cout<<"Nome do arquivo invalido."<<endl;
+                sleep(1);
+            }
+            break;
+            
+        case 4:
+            executar = false;
+            cout<<"Saindo..."<<endl;
+            break;        
+        default:
+            cout<<"==========================="<<endl;
+            cout<<"Opcao invalida"<<endl;
+            sleep(2);
+            break;
+        }
     }
-    
-    if (avformat_find_stream_info(formatoContexto, nullptr) < 0) {
-        std::cout << "Erro ao obter informações do arquivo: " << nomeArquivo << std::endl;
-        avformat_close_input(&formatoContexto);
-        return -1;
-    }
-    
-    std::cout << "Informações do arquivo de vídeo:" << std::endl;
-    std::cout << "Formato: " << formatoContexto->iformat->name << std::endl;
-    std::cout << "Duração (segundos): " << formatoContexto->duration / AV_TIME_BASE << std::endl;
-    std::cout << "Número de fluxos: " << formatoContexto->nb_streams << std::endl;
-    
-    avformat_close_input(&formatoContexto);
-    avformat_free_context(formatoContexto);
-    
     return 0;
 }
