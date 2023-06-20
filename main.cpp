@@ -9,7 +9,6 @@ using namespace std;
 string nomeArquivo;
 int sel;
 bool executar = true;
-string play = "ffplay x";
 
 int main() {
     Video arquivoVideo;
@@ -47,8 +46,7 @@ int main() {
 
         case 3:
             if(arquivoVideo.arquivoExiste()){
-                string texto =  play.replace(play.find("x"), 1, nomeArquivo);
-                system(texto.c_str());
+                arquivoVideo.play();
             }else{
                 cout<<"==========================="<<endl;
                 cout<<"Nome do arquivo invalido."<<endl;

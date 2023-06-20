@@ -50,5 +50,11 @@ bool arquivoExiste() {
     return arquivo.good();
 }
 
+void play(){
+    std::string play = "ffplay x";
+    std::string texto =  play.replace(play.find("x"), 1, nameVideo);
+    system(texto.c_str());
+}
+
 };
 
